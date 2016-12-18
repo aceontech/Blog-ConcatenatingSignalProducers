@@ -3,7 +3,7 @@
 //  ConcatenatingSignalProducers
 //
 //  Created by Alex on 05/12/16.
-//  Copyright © 2016 Jarroo. All rights reserved.
+//  www.jarroo.com
 //
 
 import UIKit
@@ -15,6 +15,11 @@ extension SignalProducer {
         let p = SignalProducer<SignalProducer<Value,Error>,Error>(values: producers)
         return p.flatten(strategy)
     }
+}
+
+struct User {
+    let name:String
+    let avatarUrl:String
 }
 
 class APIClient {
@@ -33,13 +38,16 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         let client = APIClient()
-        let getAvatars = [
-            client.getAvatar(url: "http://www.trump.net/sticker1.png"),
-            client.getAvatar(url: "http://www.trump.net/sticker2.png"),
-            client.getAvatar(url: "http://www.trump.net/sticker3.png"),
-            client.getAvatar(url: "http://www.trump.net/sticker4.png"),
-            client.getAvatar(url: "http://www.trump.net/sticker5.png"),
+        
+        let users = [
+            User(name: "User 1", avatarUrl: "http://www.trump.net/sticker1.png"),
+            User(name: "User 2", avatarUrl: "http://www.trump.net/sticker2.png"),
+            User(name: "User 3", avatarUrl: "http://www.trump.net/sticker3.png"),
+            User(name: "User 4", avatarUrl: "http://www.trump.net/sticker4.png"),
+            User(name: "User 5", avatarUrl: "http://www.trump.net/sticker5.png"),
         ]
+        
+        let getAvatars = users.map { client.getAvatar(url: $0.avatarUrl) }
         
         SignalProducer
             .flatten(.concat, producers: getAvatars)
